@@ -25,6 +25,7 @@ http://31.59.121.178:8080/
 ---
 
 ## 🧠 Architecture
+```bash
 Client (Browser)
 ↓
 Nginx
@@ -33,6 +34,7 @@ Nginx
 │ │
 app1 app2
 
+```
 ---
 
 ## ⚙️ Tech Stack
@@ -61,6 +63,8 @@ app1 app2
 - Requests are forwarded to backend services
 - Traffic is distributed between multiple containers
 - Each container responds independently
+
+---
 
 ## 🧠 What I Practiced
 - Docker multi-container architecture
