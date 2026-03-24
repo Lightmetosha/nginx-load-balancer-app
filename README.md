@@ -31,7 +31,7 @@ Client (Browser)
 Nginx
 ↓
 ┌─────────────┐
-│ │
+│    │
 app1 app2
 
 ```
