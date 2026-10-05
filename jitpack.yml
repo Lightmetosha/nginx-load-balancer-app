@@ -1,0 +1,15 @@
+jdk:
+  - openjdk17
+
+before_install:
+  - sdk install gradle 8.9 || true
+  - sdk use gradle 8.9
+
+install:
+  - cat .fittrack/part-* | base64 -d > /tmp/fittrack.zip
+  - rm -rf /tmp/fittrack && mkdir -p /tmp/fittrack
+  - unzip -q /tmp/fittrack.zip -d /tmp/fittrack
+  - cd /tmp/fittrack && gradle :app:assembleDebug --no-daemon --stacktrace
+  - mkdir -p "$HOME/.m2/repository/com/github/Lightmetosha/$ARTIFACT/$VERSION"
+  - cp /tmp/fittrack/app/build/outputs/apk/debug/app-debug.apk "$HOME/.m2/repository/com/github/Lightmetosha/$ARTIFACT/$VERSION/$ARTIFACT-$VERSION.apk"
+  - printf '<project xmlns="http://maven.apache.org/POM/4.0.0"><modelVersion>4.0.0</modelVersion><groupId>com.github.Lightmetosha</groupId><artifactId>%s</artifactId><version>%s</version><packaging>apk</packaging></project>\n' "$ARTIFACT" "$VERSION" > "$HOME/.m2/repository/com/github/Lightmetosha/$ARTIFACT/$VERSION/$ARTIFACT-$VERSION.pom"
