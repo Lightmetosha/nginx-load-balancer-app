@@ -20,6 +20,7 @@ jobs:
           mkdir -p fittrack
           unzip -q /tmp/fittrack.zip -d fittrack
           test -f fittrack/settings.gradle.kts
+          printf "android.useAndroidX=true\nandroid.enableJetifier=true\n" > fittrack/gradle.properties
           ls -la /usr/local/lib/android/sdk/platforms || true
           ls -la /usr/local/lib/android/sdk/build-tools || true
 
