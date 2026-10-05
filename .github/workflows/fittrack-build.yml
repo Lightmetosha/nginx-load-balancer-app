@@ -37,6 +37,7 @@ jobs:
           sed -i 's/version "8.7.3"/version "8.9.1"/' fittrack-src/build.gradle.kts
           sed -i 's/compileSdk = 35/compileSdk = 36/' fittrack-src/app/build.gradle.kts
           sed -i '/namespace = "com.lightme.fittrack"/a\\    compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }' fittrack-src/app/build.gradle.kts
+          python3 .github/fittrack-fix-source.py fittrack-src
           ls -la fittrack-src
 
       - name: Set up JDK 17
