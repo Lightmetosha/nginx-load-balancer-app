@@ -20,19 +20,13 @@ jobs:
           mkdir -p fittrack
           unzip -q /tmp/fittrack.zip -d fittrack
           test -f fittrack/settings.gradle.kts
+          ls -la /usr/local/lib/android/sdk/platforms || true
+          ls -la /usr/local/lib/android/sdk/build-tools || true
 
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-
-      - name: Install Android SDK packages
-        shell: bash
-        run: |
-          export ANDROID_HOME=/usr/local/lib/android/sdk
-          export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - uses: gradle/actions/setup-gradle@v4
         with:
