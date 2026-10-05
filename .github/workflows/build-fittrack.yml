@@ -23,26 +23,8 @@ jobs:
           printf "android.useAndroidX=true\nandroid.enableJetifier=true\norg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8\nkotlin.daemon.jvmargs=-Xmx2g\norg.gradle.workers.max=2\n" > fittrack/gradle.properties
           sed -i 's/version "8.7.3"/version "8.9.1"/' fittrack/build.gradle.kts
           sed -i 's/compileSdk = 35/compileSdk = 36/' fittrack/app/build.gradle.kts
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path("fittrack/app/build.gradle.kts")
-          s = p.read_text()
-          needle = '    namespace = "com.lightme.fittrack"\n'
-          insert = '''    namespace = "com.lightme.fittrack"
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-'''
-          if needle in s and "compileOptions {" not in s:
-              s = s.replace(needle, insert, 1)
-          p.write_text(s)
-          PY
-          ls -la /usr/local/lib/android/sdk/platforms || true
-          ls -la /usr/local/lib/android/sdk/build-tools || true
+          python3 -c 'from pathlib import Path; p=Path("fittrack/app/build.gradle.kts"); s=p.read_text(); n="    namespace = \"com.lightme.fittrack\"\\n"; i="    namespace = \"com.lightme.fittrack\"\\n    compileOptions {\\n        sourceCompatibility = JavaVersion.VERSION_17\\n        targetCompatibility = JavaVersion.VERSION_17\\n    }\\n    kotlinOptions {\\n        jvmTarget = \"17\"\\n    }\\n"; p.write_text(s.replace(n,i,1) if "compileOptions {" not in s else s)'
+          sed -n '1,35p' fittrack/app/build.gradle.kts
 
       - uses: actions/setup-java@v4
         with:
