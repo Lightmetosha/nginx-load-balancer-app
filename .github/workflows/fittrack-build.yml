@@ -33,6 +33,13 @@ jobs:
           mkdir -p fittrack-src
           unzip -q /tmp/fittrack-source.zip -d fittrack-src
           test -f fittrack-src/settings.gradle.kts
+          cat > fittrack-src/gradle.properties <<'EOF'
+android.useAndroidX=true
+android.enableJetifier=true
+org.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8
+kotlin.daemon.jvmargs=-Xmx2g
+org.gradle.workers.max=2
+EOF
           ls -la fittrack-src
 
       - name: Set up JDK 17
