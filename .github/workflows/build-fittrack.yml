@@ -16,6 +16,7 @@ jobs:
         shell: bash
         run: |
           cat .fittrack/part-* | base64 -d > /tmp/fittrack.zip
+          rm -rf fittrack
           mkdir -p fittrack
           unzip -q /tmp/fittrack.zip -d fittrack
           test -f fittrack/settings.gradle.kts
@@ -25,11 +26,11 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - uses: android-actions/setup-android@v3
-
-      - name: Install Android SDK
+      - name: Install Android SDK packages
         shell: bash
         run: |
+          export ANDROID_HOME=/usr/local/lib/android/sdk
+          export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
           yes | sdkmanager --licenses >/dev/null || true
           sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
@@ -39,6 +40,9 @@ jobs:
 
       - name: Build debug APK
         working-directory: fittrack
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
+          ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
         run: gradle :app:assembleDebug --stacktrace
 
       - name: Upload APK
