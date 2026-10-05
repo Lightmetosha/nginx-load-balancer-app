@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fittrack-build-v12
     paths:
       - '.github/workflows/build-fittrack-temp.yml'
       - '.fittrack-build-trigger'
