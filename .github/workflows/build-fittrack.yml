@@ -20,7 +20,7 @@ jobs:
           mkdir -p fittrack
           unzip -q /tmp/fittrack.zip -d fittrack
           test -f fittrack/settings.gradle.kts
-          printf "android.useAndroidX=true\nandroid.enableJetifier=true\n" > fittrack/gradle.properties
+          printf "android.useAndroidX=true\nandroid.enableJetifier=true\norg.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g -Dfile.encoding=UTF-8\nkotlin.daemon.jvmargs=-Xmx2g\norg.gradle.workers.max=2\n" > fittrack/gradle.properties
           sed -i 's/version "8.7.3"/version "8.9.1"/' fittrack/build.gradle.kts
           sed -i 's/compileSdk = 35/compileSdk = 36/' fittrack/app/build.gradle.kts
           ls -la /usr/local/lib/android/sdk/platforms || true
@@ -40,7 +40,7 @@ jobs:
         env:
           ANDROID_HOME: /usr/local/lib/android/sdk
           ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
-        run: gradle :app:assembleDebug --stacktrace
+        run: gradle :app:assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
