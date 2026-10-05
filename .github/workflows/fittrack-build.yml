@@ -16,6 +16,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+      ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
     steps:
       - name: Checkout build branch
         uses: actions/checkout@v4
@@ -29,6 +32,7 @@ jobs:
           unzip -t /tmp/fittrack-source.zip
           mkdir -p fittrack-src
           unzip -q /tmp/fittrack-source.zip -d fittrack-src
+          test -f fittrack-src/settings.gradle.kts
           ls -la fittrack-src
 
       - name: Set up JDK 17
@@ -37,14 +41,17 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android SDK 35
+      - name: Ensure Android SDK 35
         shell: bash
         run: |
-          yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platforms;android-35" "build-tools;35.0.0"
+          set -euxo pipefail
+          SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/16.0/bin/sdkmanager"
+          fi
+          "$SDKMANAGER" "platforms;android-35" "build-tools;35.0.0"
+          ls -la "$ANDROID_SDK_ROOT/platforms/android-35"
+          ls -la "$ANDROID_SDK_ROOT/build-tools/35.0.0"
 
       - name: Set up Gradle 8.9
         uses: gradle/actions/setup-gradle@v4
@@ -59,9 +66,11 @@ jobs:
       - name: Verify APK
         shell: bash
         run: |
-          test -f fittrack-src/app/build/outputs/apk/debug/app-debug.apk
-          ls -lh fittrack-src/app/build/outputs/apk/debug/app-debug.apk
-          sha256sum fittrack-src/app/build/outputs/apk/debug/app-debug.apk
+          set -euxo pipefail
+          APK=fittrack-src/app/build/outputs/apk/debug/app-debug.apk
+          test -f "$APK"
+          ls -lh "$APK"
+          sha256sum "$APK"
 
       - name: Upload FitTrack APK
         uses: actions/upload-artifact@v4
